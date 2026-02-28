@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Kekauoha Music Admin</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .admin-page { min-height: 100vh; background: var(--color-bg-alt); padding: var(--space-2xl) 0; }
+    .admin-shell { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); padding: var(--space-xl); }
+    .admin-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); }
+    .admin-actions { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+    .admin-note { color: var(--color-text-muted); font-size: 0.9rem; margin-top: var(--space-sm); }
+    .admin-filters { display: grid; grid-template-columns: 1.3fr 0.7fr auto; gap: var(--space-sm); margin: var(--space-lg) 0; }
+    .admin-filters .btn { justify-content: center; }
+    .admin-table-wrap { overflow-x: auto; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+    .admin-table th, .admin-table td { border-bottom: 1px solid var(--color-border); padding: 0.7rem 0.55rem; text-align: left; vertical-align: top; }
+    .admin-table th { color: var(--color-primary); font-family: var(--font-heading); }
+    .sort-btn {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+      padding: 0;
+    }
+    .sort-btn .sort-indicator { font-size: 0.78rem; opacity: 0.8; }
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+      flex-wrap: wrap;
+    }
+    .pagination .btn { min-width: 90px; justify-content: center; }
+    .pagination-meta { color: var(--color-text-muted); font-size: 0.88rem; }
+    .admin-table input, .admin-table select, .admin-table textarea { width: 100%; }
+    .pill { display: inline-block; padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .pill-new { background: #eaf3ff; color: #1a5276; }
+    .pill-contacted { background: #fff8e4; color: #9b6b00; }
+    .pill-booked { background: #e7f8ee; color: #1e8449; }
+    .pill-closed { background: #f3f4f6; color: #3f4657; }
+    .hidden { display: none !important; }
+    @media (max-width: 900px) {
+      .admin-top { align-items: flex-start; flex-direction: column; }
+      .admin-filters { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="admin-page">
+    <div class="container">
+      <section class="admin-shell" aria-label="Admin dashboard">
+        <div class="admin-top">
+          <div>
+            <span class="section-tag">Owner Portal</span>
+            <h1 class="section-title">Booking Dashboard</h1>
+            <p class="admin-note">Manage lesson requests submitted through the website.</p>
+          </div>
+          <div class="admin-actions">
+            <button class="btn btn-outline" id="loginBtn" type="button">Log In</button>
+            <button class="btn btn-outline hidden" id="logoutBtn" type="button">Log Out</button>
+            <button class="btn btn-primary hidden" id="refreshBtn" type="button">Refresh</button>
+          </div>
+        </div>
+
+        <div id="authStatus" class="admin-note" role="status" aria-live="polite">Checking login status…</div>
+        <div id="errorBox" class="form-error-msg hidden" role="alert" aria-live="assertive"></div>
+
+        <div class="admin-filters hidden" id="filtersWrap">
+          <input type="search" id="searchInput" placeholder="Search by name, email, phone, program, or message" aria-label="Search submissions" />
+          <select id="statusFilter" aria-label="Filter by status">
+            <option value="all">All statuses</option>
+            <option value="new">new</option>
+            <option value="contacted">contacted</option>
+            <option value="booked">booked</option>
+            <option value="closed">closed</option>
+          </select>
+          <button class="btn btn-outline" id="clearFiltersBtn" type="button">Clear</button>
+        </div>
+
+        <div id="resultsMeta" class="admin-note hidden" role="status" aria-live="polite"></div>
+
+        <div class="admin-table-wrap hidden" id="tableWrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>
+                  <button class="sort-btn" data-sort-key="submittedAt" type="button" aria-label="Sort by submitted date">
+                    Submitted <span class="sort-indicator" data-sort-indicator="submittedAt">↓</span>
+                  </button>
+                </th>
+                <th>
+                  <button class="sort-btn" data-sort-key="student" type="button" aria-label="Sort by student name">
+                    Student <span class="sort-indicator" data-sort-indicator="student">↕</span>
+                  </button>
+                </th>
+                <th>Contact</th>
+                <th>Program</th>
+                <th>Message</th>
+                <th>
+                  <button class="sort-btn" data-sort-key="status" type="button" aria-label="Sort by status">
+                    Status <span class="sort-indicator" data-sort-indicator="status">↕</span>
+                  </button>
+                </th>
+                <th>Owner Notes</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="submissionsBody"></tbody>
+          </table>
+        </div>
+
+        <div class="pagination hidden" id="paginationWrap">
+          <button class="btn btn-outline" id="prevPageBtn" type="button">Previous</button>
+          <span class="pagination-meta" id="pageMeta">Page 1 of 1</span>
+          <button class="btn btn-outline" id="nextPageBtn" type="button">Next</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

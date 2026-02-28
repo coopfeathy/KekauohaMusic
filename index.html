@@ -5,7 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Kekauoha Music — Professional music instruction, lesson bookings, studio policies, pricing, and professional references for prospective students and collaborators." />
   <title>Kekauoha Music</title>
+  <meta property="og:title" content="Kekauoha Music" />
+  <meta property="og:description" content="Professional music instruction, lesson bookings, studio policies, pricing, and references." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.kekauohamusic.com/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Kekauoha Music" />
+  <meta name="twitter:description" content="Professional music instruction rooted in aloha spirit." />
+  <link rel="icon" type="image/png" href="images/logo%20-%201.png" />
   <link rel="stylesheet" href="css/styles.css" />
+
+  <script>
+    window.KM_CONFIG = {
+      ga4MeasurementId: ''
+    };
+  </script>
+
+  <script>
+    (function () {
+      if (!window.KM_CONFIG || !window.KM_CONFIG.ga4MeasurementId) return;
+
+      var measurementId = window.KM_CONFIG.ga4MeasurementId.trim();
+      if (!measurementId) return;
+
+      var gaScript = document.createElement('script');
+      gaScript.async = true;
+      gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(measurementId);
+      document.head.appendChild(gaScript);
+
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', measurementId);
+    }());
+  </script>
 </head>
 <body>
 
@@ -13,7 +46,7 @@
   <header class="site-header" id="top">
     <div class="container nav-container">
       <a href="#top" class="logo" aria-label="Kekauoha Music home">
-        <span class="logo-icon">♪</span>
+        <img src="images/logo%20-%201.png" alt="Kekauoha Music logo" class="logo-img" width="40" height="40" />
         <span class="logo-text">Kekauoha Music</span>
       </a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navMenu">
@@ -37,6 +70,9 @@
     <section class="hero" aria-label="Welcome">
       <div class="hero-overlay"></div>
       <div class="container hero-content">
+        <div class="hero-logo-wrap">
+          <img src="images/logo%20-%202.png" alt="Kekauoha Music" class="hero-logo" width="200" height="200" />
+        </div>
         <h1 class="hero-title">Where Music Comes to Life</h1>
         <p class="hero-subtitle">Professional music instruction rooted in aloha spirit — inspiring students of all ages and skill levels.</p>
         <div class="hero-actions">
@@ -434,7 +470,15 @@
           </ul>
         </div>
 
-        <form class="booking-form" id="bookingForm" novalidate>
+        <form class="booking-form" id="bookingForm" name="booking-request" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="booking-request" />
+          <input type="hidden" name="_km_started_at" id="kmStartedAt" value="" />
+
+          <div class="form-group" hidden aria-hidden="true">
+            <label for="botField">Website</label>
+            <input type="text" id="botField" name="bot-field" tabindex="-1" autocomplete="off" />
+          </div>
+
           <div class="form-row">
             <div class="form-group">
               <label for="firstName">First Name <span aria-hidden="true">*</span></label>
@@ -523,14 +567,24 @@
       </div>
     </section>
 
+    <form name="booking-updates" data-netlify="true" hidden>
+      <input type="text" name="submissionId" />
+      <input type="text" name="status" />
+      <input type="text" name="notes" />
+      <input type="text" name="updatedBy" />
+      <input type="text" name="updatedAt" />
+    </form>
+
   </main>
 
   <!-- ===== FOOTER ===== -->
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="footer-brand">
-        <span class="logo-icon">♪</span>
-        <span class="logo-text">Kekauoha Music</span>
+        <a href="#top" class="footer-logo-wrap" aria-label="Back to top">
+          <img src="images/logo%20-%201.png" alt="Kekauoha Music" class="footer-logo-img" width="48" height="48" />
+          <span class="footer-logo-text">Kekauoha Music</span>
+        </a>
         <p>Professional music instruction &amp; studio collaboration.<br />Rooted in aloha, inspired by music.</p>
       </div>
       <nav class="footer-nav" aria-label="Footer navigation">

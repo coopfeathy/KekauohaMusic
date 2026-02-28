@@ -79,6 +79,16 @@
 
   if (!form) return;
 
+  var startedAtField = document.getElementById('kmStartedAt');
+  if (startedAtField) {
+    startedAtField.value = String(Date.now());
+  }
+
+  function trackEvent (eventName, eventParams) {
+    if (typeof window.gtag !== 'function') return;
+    window.gtag('event', eventName, eventParams || {});
+  }
+
   /* Required text/select fields and their error element IDs */
   var requiredFields = [
     { id: 'firstName',  errorId: 'firstNameError',  label: 'First name' },
@@ -147,6 +157,25 @@
     return valid;
   }
 
+  function isLikelySpam () {
+    var honeypot = document.getElementById('botField');
+    if (honeypot && honeypot.value.trim() !== '') {
+      return true;
+    }
+
+    if (!startedAtField || !startedAtField.value) {
+      return false;
+    }
+
+    var started = Number(startedAtField.value);
+    if (!Number.isFinite(started)) {
+      return false;
+    }
+
+    var elapsedMs = Date.now() - started;
+    return elapsedMs < 2500;
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -154,7 +183,22 @@
     successMsg.hidden = true;
     errorMsg.hidden   = true;
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      trackEvent('generate_lead', {
+        event_category: 'engagement',
+        event_label: 'booking_form_invalid'
+      });
+      return;
+    }
+
+    if (isLikelySpam()) {
+      errorMsg.textContent = 'Unable to submit right now. Please refresh and try again.';
+      errorMsg.hidden = false;
+      trackEvent('booking_spam_blocked', {
+        event_category: 'security'
+      });
+      return;
+    }
 
     /* Simulate async submission (replace with real endpoint as needed) */
     var btnText    = submitBtn.querySelector('.btn-text');
@@ -164,16 +208,45 @@
     btnText.textContent  = 'Sending…';
     btnSpinner.hidden    = false;
 
-    setTimeout(function () {
-      submitBtn.disabled   = false;
-      btnText.textContent  = 'Send Booking Request';
-      btnSpinner.hidden    = true;
+    fetch('/', {
+      method: 'POST',
+      body: new URLSearchParams(new FormData(form)).toString(),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      }
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('Request failed');
+        }
 
-      /* Show success */
-      successMsg.hidden = false;
-      form.reset();
-      successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 1200);
+        successMsg.hidden = false;
+        form.reset();
+        if (startedAtField) {
+          startedAtField.value = String(Date.now());
+        }
+
+        trackEvent('generate_lead', {
+          event_category: 'conversion',
+          event_label: 'booking_form_submitted'
+        });
+
+        successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      })
+      .catch(function () {
+        errorMsg.textContent = 'Something went wrong. Please try again or email us directly at info@kekauohamusic.com.';
+        errorMsg.hidden = false;
+
+        trackEvent('booking_submit_error', {
+          event_category: 'error'
+        });
+      })
+      .finally(function () {
+        submitBtn.disabled   = false;
+        btnText.textContent  = 'Send Booking Request';
+        btnSpinner.hidden    = true;
+      });
   });
 
   /* Clear per-field error on input */
