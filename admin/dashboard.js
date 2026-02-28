@@ -449,7 +449,9 @@
       refreshBtn.classList.add('hidden');
     });
 
-    window.netlifyIdentity.init();
+    window.netlifyIdentity.init({
+      APIUrl: 'https://kekauoha-music.netlify.app/.netlify/identity'
+    });
   }
 
   initIdentityHandlers();
