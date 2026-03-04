@@ -235,7 +235,7 @@
         successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       })
       .catch(function () {
-        errorMsg.textContent = 'Something went wrong. Please try again or email us directly at info@kekauohamusic.com.';
+        errorMsg.textContent = 'Something went wrong. Please try again or call us at +1 (310) 387-8374.';
         errorMsg.hidden = false;
 
         trackEvent('booking_submit_error', {
