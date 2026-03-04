@@ -19,6 +19,7 @@
   var prevPageBtn = document.getElementById('prevPageBtn');
   var nextPageBtn = document.getElementById('nextPageBtn');
   var pageMeta = document.getElementById('pageMeta');
+  var adminNav = document.querySelector('.admin-nav');
   var sortButtons = document.querySelectorAll('.sort-btn');
   var sortIndicators = document.querySelectorAll('[data-sort-indicator]');
 
@@ -64,17 +65,6 @@
     return getUserRoles(user).includes('admin');
   }
 
-  function setLoggedOutState(message) {
-    authStatus.textContent = message || 'Log in to view booking submissions.';
-    tableWrap.classList.add('hidden');
-    if (filtersWrap) filtersWrap.classList.add('hidden');
-    if (resultsMeta) resultsMeta.classList.add('hidden');
-    if (paginationWrap) paginationWrap.classList.add('hidden');
-    loginBtn.classList.remove('hidden');
-    logoutBtn.classList.add('hidden');
-    refreshBtn.classList.add('hidden');
-  }
-
   function setNonAdminState() {
     tableWrap.classList.add('hidden');
     if (filtersWrap) filtersWrap.classList.add('hidden');
@@ -84,7 +74,26 @@
     logoutBtn.classList.add('hidden');
     refreshBtn.classList.add('hidden');
     authStatus.classList.add('hidden');
+    if (adminNav) adminNav.classList.add('hidden');
     if (accessDenied) accessDenied.classList.remove('hidden');
+  }
+
+  function setAdminState() {
+    if (adminNav) adminNav.classList.remove('hidden');
+  }
+
+  function setLoggedOutState(message) {
+    tableWrap.classList.add('hidden');
+    if (filtersWrap) filtersWrap.classList.add('hidden');
+    if (resultsMeta) resultsMeta.classList.add('hidden');
+    if (paginationWrap) paginationWrap.classList.add('hidden');
+    if (adminNav) adminNav.classList.add('hidden');
+    loginBtn.classList.remove('hidden');
+    logoutBtn.classList.add('hidden');
+    refreshBtn.classList.add('hidden');
+    authStatus.classList.remove('hidden');
+    authStatus.textContent = message;
+    if (accessDenied) accessDenied.classList.add('hidden');
   }
 
   function setError(message) {
@@ -342,6 +351,7 @@
     loginBtn.classList.add('hidden');
     logoutBtn.classList.remove('hidden');
     refreshBtn.classList.remove('hidden');
+    setAdminState();
   }
 
   async function saveSubmissionUpdate(row) {
@@ -522,6 +532,7 @@
       if (resultsMeta) resultsMeta.classList.add('hidden');
       if (paginationWrap) paginationWrap.classList.add('hidden');
       if (accessDenied) accessDenied.classList.add('hidden');
+      if (adminNav) adminNav.classList.add('hidden');
       submissionsBody.innerHTML = '';
       allSubmissions = [];
       currentPage = 1;
@@ -703,6 +714,7 @@
       if (!response.ok) throw new Error('Network error');
       allTestimonials = await response.json();
 
+      setAdminState();
       renderTestimonials();
     } catch (error) {
       console.error('Error loading testimonials:', error);
