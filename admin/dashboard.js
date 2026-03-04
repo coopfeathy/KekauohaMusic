@@ -127,18 +127,18 @@
     row.setAttribute('data-id', item.id);
 
     row.innerHTML = '' +
-      '<td>' + escapeHtml(formatDate(item.submittedAt)) + '</td>' +
-      '<td><strong>' + escapeHtml(item.firstName + ' ' + item.lastName).trim() + '</strong></td>' +
-      '<td>' +
+      '<td data-label="Submitted">' + escapeHtml(formatDate(item.submittedAt)) + '</td>' +
+      '<td data-label="Student"><strong>' + escapeHtml(item.firstName + ' ' + item.lastName).trim() + '</strong></td>' +
+      '<td data-label="Contact">' +
         '<div><a href="mailto:' + escapeHtml(item.email) + '">' + escapeHtml(item.email || '—') + '</a></div>' +
         '<div>' + escapeHtml(item.phone || '—') + '</div>' +
       '</td>' +
-      '<td>' +
+      '<td data-label="Program">' +
         '<div>' + escapeHtml(item.instrument || '—') + '</div>' +
         '<div class="admin-note">' + escapeHtml(item.level || '—') + '</div>' +
       '</td>' +
-      '<td>' + escapeHtml(item.message || '—') + '</td>' +
-      '<td>' +
+      '<td data-label="Message">' + escapeHtml(item.message || '—') + '</td>' +
+      '<td data-label="Status">' +
         '<div class="' + statusPillClass(item.status) + '">' + escapeHtml(item.status || 'new') + '</div>' +
         '<select aria-label="Update status" class="status-select" style="margin-top:0.45rem;">' +
           '<option value="new">new</option>' +
@@ -147,7 +147,7 @@
           '<option value="closed">closed</option>' +
         '</select>' +
       '</td>' +
-      '<td><textarea rows="3" class="notes-input" placeholder="Add private notes for follow-up...">' + escapeHtml(item.notes || '') + '</textarea></td>' +
+      '<td data-label="Notes"><textarea rows="3" class="notes-input" placeholder="Add private notes for follow-up...">' + escapeHtml(item.notes || '') + '</textarea></td>' +
       '<td><button type="button" class="btn btn-outline save-btn">Save</button></td>';
 
     var select = row.querySelector('.status-select');
@@ -161,7 +161,7 @@
 
     if (!items.length) {
       var empty = document.createElement('tr');
-      empty.innerHTML = '<td colspan="8">No matching submissions found.</td>';
+      empty.innerHTML = '<td colspan="8" style="text-align: center; padding: 3rem 1rem; color: var(--color-text-muted); font-size: 1rem;"><div style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;">📭</div>No matching submissions found.<br><span style="font-size: 0.9rem; opacity: 0.8;">Try adjusting your filters or search terms.</span></td>';
       submissionsBody.appendChild(empty);
       return;
     }
