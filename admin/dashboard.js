@@ -537,5 +537,278 @@
     });
   }
 
+  /* ================================================
+     Testimonials Management
+     ================================================ */
+  var addTestimonialBtn = document.getElementById('addTestimonialBtn');
+  var testimonialModal = document.getElementById('testimonialModal');
+  var closeModal = document.getElementById('closeModal');
+  var cancelBtn = document.getElementById('cancelBtn');
+  var testimonialForm = document.getElementById('testimonialForm');
+  var testimonialsBody = document.getElementById('testimonialsBody');
+  var testimonialsContainer = document.getElementById('testimonialsContainer');
+  var testimonialsEmpty = document.getElementById('testimonialsEmpty');
+  var testimonialsSection = document.getElementById('testimonialsSection');
+  var bookingSection = document.getElementById('bookingSection');
+  var testimonialAccessDenied = document.getElementById('testimonialAccessDenied');
+  var testimonialLogoutBtn = document.getElementById('testimonialLogoutBtn');
+  var testimonialLogoutFromDenied = document.getElementById('testimonialLogoutFromDenied');
+
+  var allTestimonials = [];
+  var editingTestimonialId = null;
+
+  function openModal() {
+    testimonialModal.classList.remove('hidden');
+    document.getElementById('testimonialQuote').focus();
+  }
+
+  function closeModalWindow() {
+    testimonialModal.classList.add('hidden');
+    editingTestimonialId = null;
+    testimonialForm.reset();
+  }
+
+  function showTestimonialError(field, message) {
+    var el = document.getElementById(field + 'Error');
+    if (el) el.textContent = message;
+  }
+
+  function clearTestimonialErrors() {
+    document.querySelectorAll('.field-error').forEach(function (el) {
+      el.textContent = '';
+    });
+  }
+
+  function validateTestimonialForm() {
+    clearTestimonialErrors();
+    var quote = document.getElementById('testimonialQuote').value.trim();
+    var author = document.getElementById('testimonialAuthor').value.trim();
+    var title = document.getElementById('testimonialTitle').value.trim();
+    var location = document.getElementById('testimonialLocation').value.trim();
+    var avatar = document.getElementById('testimonialAvatar').value.trim();
+
+    if (!quote) {
+      showTestimonialError('quote', 'Quote is required');
+      return false;
+    }
+    if (!author) {
+      showTestimonialError('author', 'Author name is required');
+      return false;
+    }
+    if (!title) {
+      showTestimonialError('title', 'Title is required');
+      return false;
+    }
+    if (!location) {
+      showTestimonialError('location', 'Location is required');
+      return false;
+    }
+    if (!avatar) {
+      showTestimonialError('avatar', 'Avatar initials required');
+      return false;
+    }
+    if (avatar.length > 2) {
+      showTestimonialError('avatar', 'Max 2 characters');
+      return false;
+    }
+    return true;
+  }
+
+  async function saveTestimonial() {
+    if (!validateTestimonialForm()) return;
+
+    try {
+      var jwtToken = window.netlifyIdentity.currentUser().token.access_token;
+      var quote = document.getElementById('testimonialQuote').value.trim();
+      var author = document.getElementById('testimonialAuthor').value.trim();
+      var title = document.getElementById('testimonialTitle').value.trim();
+      var location = document.getElementById('testimonialLocation').value.trim();
+      var avatar = document.getElementById('testimonialAvatar').value.trim();
+      var published = document.getElementById('testimonialPublished').checked;
+
+      var response = await fetch('/api/admin/testimonials/update', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + jwtToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'add',
+          quote: quote,
+          author: author,
+          title: title,
+          location: location,
+          avatar: avatar,
+          published: published
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save testimonial');
+      }
+
+      closeModalWindow();
+      loadTestimonials();
+    } catch (error) {
+      console.error('Error saving testimonial:', error);
+      errorBox.textContent = 'Error saving testimonial: ' + error.message;
+      errorBox.classList.remove('hidden');
+    }
+  }
+
+  async function deleteTestimonial(id) {
+    if (!confirm('Delete this testimonial? This cannot be undone.')) return;
+
+    try {
+      var jwtToken = window.netlifyIdentity.currentUser().token.access_token;
+      var response = await fetch('/api/admin/testimonials/update', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + jwtToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'delete',
+          submissionId: id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete testimonial');
+      }
+
+      loadTestimonials();
+    } catch (error) {
+      console.error('Error deleting testimonial:', error);
+      errorBox.textContent = 'Error deleting testimonial: ' + error.message;
+      errorBox.classList.remove('hidden');
+    }
+  }
+
+  async function loadTestimonials() {
+    try {
+      var jwtToken = window.netlifyIdentity.currentUser().token.access_token;
+      var response = await fetch('/api/admin/testimonials', {
+        headers: { 'Authorization': 'Bearer ' + jwtToken }
+      });
+
+      if (response.status === 403) {
+        testimonialsContainer.classList.add('hidden');
+        testimonialsEmpty.classList.add('hidden');
+        testimonialAccessDenied.classList.remove('hidden');
+        addTestimonialBtn.classList.add('hidden');
+        return;
+      }
+
+      if (!response.ok) throw new Error('Network error');
+      allTestimonials = await response.json();
+
+      renderTestimonials();
+    } catch (error) {
+      console.error('Error loading testimonials:', error);
+    }
+  }
+
+  function renderTestimonials() {
+    testimonialsBody.innerHTML = '';
+
+    if (!allTestimonials || allTestimonials.length === 0) {
+      testimonialsContainer.classList.add('hidden');
+      testimonialsEmpty.classList.remove('hidden');
+      return;
+    }
+
+    testimonialsContainer.classList.remove('hidden');
+    testimonialsEmpty.classList.add('hidden');
+
+    allTestimonials.forEach(function (t) {
+      var row = document.createElement('tr');
+      row.innerHTML =
+        '<td class="quote-cell" data-label="Quote">"' + escapeHtml(t.quote).substring(0, 50) + '…"</td>' +
+        '<td data-label="Author">' + escapeHtml(t.author) + '</td>' +
+        '<td data-label="Title">' + escapeHtml(t.title) + '</td>' +
+        '<td data-label="Location">' + escapeHtml(t.location) + '</td>' +
+        '<td data-label="Published"><span class="' + (t.published ? 'published-badge' : 'draft-badge') + '">' +
+        (t.published ? 'Published' : 'Draft') + '</span></td>' +
+        '<td data-label="Action">' +
+        '<button class="btn action-btn delete-btn" type="button" data-id="' + escapeHtml(t.id) + '">Delete</button>' +
+        '</td>';
+
+      var deleteBtn = row.querySelector('.delete-btn');
+      deleteBtn.addEventListener('click', function () {
+        deleteTestimonial(t.id);
+      });
+
+      testimonialsBody.appendChild(row);
+    });
+  }
+
+  function escapeHtml(text) {
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+  }
+
+  /* Tab Navigation */
+  var navButtons = document.querySelectorAll('.admin-nav-btn');
+  navButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var section = this.getAttribute('data-section');
+      navButtons.forEach(function (b) {
+        b.setAttribute('aria-selected', 'false');
+      });
+      this.setAttribute('aria-selected', 'true');
+
+      if (section === 'booking') {
+        bookingSection.removeAttribute('hidden');
+        testimonialsSection.setAttribute('hidden', '');
+      } else {
+        bookingSection.setAttribute('hidden', '');
+        testimonialsSection.removeAttribute('hidden');
+        loadTestimonials();
+      }
+    });
+  });
+
+  /* Modal Event Listeners */
+  if (addTestimonialBtn) {
+    addTestimonialBtn.addEventListener('click', openModal);
+  }
+  if (closeModal) {
+    closeModal.addEventListener('click', closeModalWindow);
+  }
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', closeModalWindow);
+  }
+  if (testimonialForm) {
+    testimonialForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      saveTestimonial();
+    });
+  }
+
+  testimonialModal.addEventListener('click', function (e) {
+    if (e.target === testimonialModal) {
+      closeModalWindow();
+    }
+  });
+
+  if (testimonialLogoutBtn) {
+    testimonialLogoutBtn.addEventListener('click', function () {
+      window.netlifyIdentity.logout();
+    });
+  }
+
+  if (testimonialLogoutFromDenied) {
+    testimonialLogoutFromDenied.addEventListener('click', function () {
+      window.netlifyIdentity.logout();
+    });
+  }
+
   initIdentityHandlers();
 }());

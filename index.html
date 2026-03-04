@@ -510,6 +510,17 @@
             Something went wrong. Please try again or call us at +1 (310) 387-8374.
           </div>
         </form>
+
+        <!-- Hidden testimonials form for admin submissions -->
+        <form id="testimonialForm" name="testimonials" method="POST" data-netlify="true" hidden>
+          <input type="hidden" name="form-name" value="testimonials" />
+          <input type="hidden" name="quote" />
+          <input type="hidden" name="author" />
+          <input type="hidden" name="title" />
+          <input type="hidden" name="location" />
+          <input type="hidden" name="avatar" />
+          <input type="hidden" name="published" />
+        </form>
       </div>
     </section>
 

@@ -512,6 +512,248 @@
         justify-content: center;
       }
     }
+
+    /* Admin Navigation / Tabs */
+    .admin-nav {
+      display: flex;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+      border-bottom: 2px solid rgba(26, 82, 118, 0.1);
+      padding-bottom: var(--space-md);
+    }
+
+    .admin-nav-btn {
+      background: none;
+      border: none;
+      padding: var(--space-sm) var(--space-md);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: color var(--transition);
+      position: relative;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+
+    .admin-nav-btn[aria-selected="true"] {
+      color: var(--color-primary);
+      background: rgba(26, 82, 118, 0.05);
+    }
+
+    .admin-nav-btn[aria-selected="true"]::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--color-primary);
+    }
+
+    .admin-nav-btn:hover {
+      color: var(--color-primary);
+    }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideInUp 0.3s ease-out;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg);
+      border-bottom: 1px solid rgba(26, 82, 118, 0.1);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: var(--color-text);
+    }
+
+    .modal-form {
+      padding: var(--space-lg);
+    }
+
+    .modal-form .form-group {
+      margin-bottom: var(--space-md);
+    }
+
+    .modal-form label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      font-size: 0.9rem;
+    }
+
+    .modal-form input[type="text"],
+    .modal-form textarea {
+      width: 100%;
+      padding: var(--space-sm);
+      border: 1px solid rgba(26, 82, 118, 0.2);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color var(--transition);
+    }
+
+    .modal-form input[type="text"]:focus,
+    .modal-form textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+    }
+
+    .modal-form textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .modal-form .form-group input[type="checkbox"] {
+      margin-right: var(--space-sm);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: flex-end;
+      padding-top: var(--space-md);
+      border-top: 1px solid rgba(26, 82, 118, 0.1);
+    }
+
+    /* Testimonials Table */
+    .testimonials-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(26, 82, 118, 0.1);
+    }
+
+    .testimonials-table-wrap .admin-table th {
+      background: linear-gradient(135deg, rgba(26, 82, 118, 0.08) 0%, rgba(26, 82, 118, 0.05) 100%);
+      font-weight: 700;
+    }
+
+    .testimonials-table-wrap .admin-table td {
+      padding: var(--space-md);
+    }
+
+    .testimonials-table-wrap .quote-cell {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.9rem;
+    }
+
+    .testimonials-table-wrap .action-btn {
+      display: inline-block;
+      margin-right: var(--space-sm);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .testimonials-table-wrap .delete-btn {
+      background: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+      border: 1px solid rgba(220, 53, 69, 0.3);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .testimonials-table-wrap .delete-btn:hover {
+      background: rgba(220, 53, 69, 0.2);
+      border-color: rgba(220, 53, 69, 0.5);
+    }
+
+    .published-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: rgba(40, 167, 69, 0.15);
+      color: #28a745;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .draft-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: rgba(255, 193, 7, 0.15);
+      color: #ffc107;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .modal-content {
+        width: 95%;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .modal-actions .btn {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -521,23 +763,34 @@
         <a href="/" class="admin-home-link" aria-label="Return to main website">
           Back to Website
         </a>
-        <div class="admin-top">
-          <div>
-            <span class="section-tag">Owner Portal</span>
-            <h1 class="section-title">Booking Dashboard</h1>
-            <p class="admin-note">Manage lesson requests submitted through the website.</p>
-          </div>
-          <div class="admin-actions">
-            <button class="btn btn-outline" id="loginBtn" type="button">Log In</button>
-            <button class="btn btn-outline hidden" id="logoutBtn" type="button">Log Out</button>
-            <button class="btn btn-primary hidden" id="refreshBtn" type="button">Refresh</button>
-          </div>
+
+        <div class="admin-nav" role="tablist" aria-label="Dashboard sections">
+          <button class="admin-nav-btn" role="tab" aria-selected="true" aria-controls="bookingSection" data-section="booking">
+            📝 Booking Requests
+          </button>
+          <button class="admin-nav-btn" role="tab" aria-selected="false" aria-controls="testimonialsSection" data-section="testimonials">
+            ⭐ Testimonials
+          </button>
         </div>
 
-        <div id="authStatus" class="admin-note" role="status" aria-live="polite">Checking login status…</div>
-        <div id="errorBox" class="form-error-msg hidden" role="alert" aria-live="assertive"></div>
+        <section id="bookingSection" role="tabpanel" aria-labelledby="bookingTab">
+          <div class="admin-top">
+            <div>
+              <span class="section-tag">Owner Portal</span>
+              <h1 class="section-title">Booking Dashboard</h1>
+              <p class="admin-note">Manage lesson requests submitted through the website.</p>
+            </div>
+            <div class="admin-actions">
+              <button class="btn btn-outline" id="loginBtn" type="button">Log In</button>
+              <button class="btn btn-outline hidden" id="logoutBtn" type="button">Log Out</button>
+              <button class="btn btn-primary hidden" id="refreshBtn" type="button">Refresh</button>
+            </div>
+          </div>
 
-        <div id="accessDenied" class="access-denied hidden" role="alert">
+          <div id="authStatus" class="admin-note" role="status" aria-live="polite">Checking login status…</div>
+          <div id="errorBox" class="form-error-msg hidden" role="alert" aria-live="assertive"></div>
+
+          <div id="accessDenied" class="access-denied hidden" role="alert">
           <h2>🔒 Admin Access Required</h2>
           <p>This dashboard is reserved for studio administrators. If you need to book a lesson, please use the booking form on the main website.</p>
           <p style="font-size: 0.9rem; color: var(--color-text-muted);">If you believe you should have admin access, please contact the site owner to have the <strong>admin</strong> role added to your account.</p>
@@ -594,8 +847,98 @@
           <span class="pagination-meta" id="pageMeta">Page 1 of 1</span>
           <button class="btn btn-outline" id="nextPageBtn" type="button">Next</button>
         </div>
+        </section>
+
+        <section id="testimonialsSection" role="tabpanel" aria-labelledby="testimonialsTab" hidden>
+          <div class="admin-top">
+            <div>
+              <span class="section-tag">Owner Portal</span>
+              <h1 class="section-title">Testimonials</h1>
+              <p class="admin-note">Manage references and testimonials displayed on the website.</p>
+            </div>
+            <div class="admin-actions">
+              <button class="btn btn-primary" id="addTestimonialBtn" type="button">+ Add Testimonial</button>
+              <button class="btn btn-outline hidden" id="testimonialLogoutBtn" type="button">Log Out</button>
+            </div>
+          </div>
+
+          <div id="testimonialAccessDenied" class="access-denied hidden" role="alert">
+            <h2>🔒 Admin Access Required</h2>
+            <p>This dashboard is reserved for studio administrators. If you need to book a lesson, please use the booking form on the main website.</p>
+            <a href="/#booking" class="btn btn-primary">Go to Booking Form</a>
+            <button class="btn btn-outline" id="testimonialLogoutFromDenied" type="button" style="margin-left: var(--space-sm);">Log Out</button>
+          </div>
+
+          <div id="testimonialsContainer" class="testimonials-table-wrap hidden">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Quote</th>
+                  <th>Author</th>
+                  <th>Title</th>
+                  <th>Location</th>
+                  <th>Published</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="testimonialsBody"></tbody>
+            </table>
+          </div>
+
+          <div id="testimonialsEmpty" class="admin-note hidden">
+            📭 No testimonials yet. Add one to get started!
+          </div>
+        </section>
       </section>
     </div>
+
+    <!-- Modal for adding/editing testimonials -->
+    <div id="testimonialModal" class="modal hidden" role="dialog" aria-labelledby="testimonialModalTitle">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="testimonialModalTitle">Add Testimonial</h2>
+          <button class="modal-close" id="closeModal" type="button" aria-label="Close">&times;</button>
+        </div>
+        <form id="testimonialForm" class="modal-form">
+          <div class="form-group">
+            <label for="testimonialQuote">Quote <span aria-hidden="true">*</span></label>
+            <textarea id="testimonialQuote" name="quote" required placeholder='e.g., "Working with Kekauoha Music was incredible…"'></textarea>
+            <span id="quoteError" class="field-error" role="alert"></span>
+          </div>
+          <div class="form-group">
+            <label for="testimonialAuthor">Author Name <span aria-hidden="true">*</span></label>
+            <input type="text" id="testimonialAuthor" name="author" required placeholder="e.g., Jane Smith" />
+            <span id="authorError" class="field-error" role="alert"></span>
+          </div>
+          <div class="form-group">
+            <label for="testimonialTitle">Title / Role <span aria-hidden="true">*</span></label>
+            <input type="text" id="testimonialTitle" name="title" required placeholder="e.g., Piano Student" />
+            <span id="titleError" class="field-error" role="alert"></span>
+          </div>
+          <div class="form-group">
+            <label for="testimonialLocation">Location <span aria-hidden="true">*</span></label>
+            <input type="text" id="testimonialLocation" name="location" required placeholder="e.g., Los Angeles" />
+            <span id="locationError" class="field-error" role="alert"></span>
+          </div>
+          <div class="form-group">
+            <label for="testimonialAvatar">Avatar (initials) <span aria-hidden="true">*</span></label>
+            <input type="text" id="testimonialAvatar" name="avatar" required maxlength="2" placeholder="e.g., JS" />
+            <span id="avatarError" class="field-error" role="alert"></span>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="testimonialPublished" name="published" />
+              Publish immediately
+            </label>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Testimonial</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </main>
 
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>

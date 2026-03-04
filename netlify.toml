@@ -12,6 +12,21 @@
   to = "/.netlify/functions/submissions-update"
   status = 200
 
+[[redirects]]
+  from = "/api/admin/testimonials"
+  to = "/.netlify/functions/testimonials-list"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/testimonials/update"
+  to = "/.netlify/functions/testimonials-update"
+  status = 200
+
+[[redirects]]
+  from = "/api/testimonials"
+  to = "/.netlify/functions/testimonials-list"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]

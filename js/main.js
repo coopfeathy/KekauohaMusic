@@ -269,4 +269,62 @@
     });
   }
 
+  /* ================================================
+     Load testimonials dynamically
+     ================================================ */
+  function loadTestimonials() {
+    var container = document.querySelector('.testimonials-grid');
+    if (!container) return;
+
+    fetch('/api/testimonials')
+      .then(function (res) {
+        if (!res.ok) throw new Error('Network failure');
+        return res.json();
+      })
+      .then(function (testimonials) {
+        // Filter for published testimonials only
+        var published = testimonials.filter(function (t) { return t.published; });
+        if (published.length === 0) return; // Keep hardcoded testimonials if none published
+
+        // Clear container and rebuild
+        container.innerHTML = '';
+        published.forEach(function (t) {
+          var card = document.createElement('div');
+          card.className = 'testimonial-card';
+          card.innerHTML =
+            '<div class="testimonial-quote">"' + escapeHtml(t.quote) + '"</div>' +
+            '<div class="testimonial-author">' +
+            '  <div class="author-avatar">' + escapeHtml(t.avatar || t.author.charAt(0)) + '</div>' +
+            '  <div>' +
+            '    <strong>' + escapeHtml(t.author) + '</strong>' +
+            '    <span>' + escapeHtml((t.title ? t.title + ', ' : '') + (t.location || '')) + '</span>' +
+            '  </div>' +
+            '</div>';
+          container.appendChild(card);
+        });
+      })
+      .catch(function (error) {
+        console.log('Testimonials load skipped:', error.message);
+        // Silently fail — keep hardcoded testimonials
+      });
+  }
+
+  function escapeHtml(text) {
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+  }
+
+  // Load testimonials when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadTestimonials);
+  } else {
+    loadTestimonials();
+  }
+
 }());
