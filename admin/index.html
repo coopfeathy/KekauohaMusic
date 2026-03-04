@@ -456,6 +456,7 @@
 
     /* Print Styles */
     @media print {
+      .admin-home-link,
       .admin-actions,
       .admin-filters,
       .pagination,
@@ -472,12 +473,54 @@
         font-size: 10pt;
       }
     }
+
+    /* Home Link */
+    .admin-home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition);
+      margin-bottom: var(--space-md);
+      background: rgba(26, 82, 118, 0.05);
+    }
+
+    .admin-home-link:hover {
+      background: rgba(26, 82, 118, 0.1);
+      color: var(--color-accent);
+      transform: translateX(-3px);
+    }
+
+    .admin-home-link::before {
+      content: '←';
+      font-size: 1.2rem;
+      transition: transform var(--transition);
+    }
+
+    .admin-home-link:hover::before {
+      transform: translateX(-3px);
+    }
+
+    @media (max-width: 640px) {
+      .admin-home-link {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
   <main class="admin-page">
     <div class="container">
       <section class="admin-shell" aria-label="Admin dashboard">
+        <a href="/" class="admin-home-link" aria-label="Return to main website">
+          Back to Website
+        </a>
         <div class="admin-top">
           <div>
             <span class="section-tag">Owner Portal</span>
