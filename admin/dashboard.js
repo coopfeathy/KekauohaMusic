@@ -28,6 +28,66 @@
     dir: 'desc'
   };
 
+  function normalizeRoles(rawRoles) {
+    if (!rawRoles) return [];
+    if (Array.isArray(rawRoles)) {
+      return rawRoles
+        .map(function (role) { return String(role || '').trim().toLowerCase(); })
+        .filter(Boolean);
+    }
+
+    return [String(rawRoles).trim().toLowerCase()].filter(Boolean);
+  }
+
+  function getUserRoles(user) {
+    if (!user) return [];
+    var appMetadata = user.app_metadata;
+
+    if (typeof appMetadata === 'string') {
+      try {
+        appMetadata = JSON.parse(appMetadata);
+      } catch (_error) {
+        appMetadata = null;
+      }
+    }
+
+    if (!appMetadata || typeof appMetadata !== 'object') {
+      return [];
+    }
+
+    return normalizeRoles(appMetadata.roles);
+  }
+
+  function isAdminUser(user) {
+    return getUserRoles(user).includes('admin');
+  }
+
+  function setLoggedOutState(message) {
+    authStatus.textContent = message || 'Log in to view booking submissions.';
+    tableWrap.classList.add('hidden');
+    if (filtersWrap) filtersWrap.classList.add('hidden');
+    if (resultsMeta) resultsMeta.classList.add('hidden');
+    if (paginationWrap) paginationWrap.classList.add('hidden');
+    loginBtn.classList.remove('hidden');
+    logoutBtn.classList.add('hidden');
+    refreshBtn.classList.add('hidden');
+  }
+
+  function setNonAdminState() {
+    tableWrap.classList.add('hidden');
+    if (filtersWrap) filtersWrap.classList.add('hidden');
+    if (resultsMeta) resultsMeta.classList.add('hidden');
+    if (paginationWrap) paginationWrap.classList.add('hidden');
+    loginBtn.classList.add('hidden');
+    logoutBtn.classList.remove('hidden');
+    refreshBtn.classList.add('hidden');
+    authStatus.textContent = 'This dashboard is admin-only. Redirecting to the booking form…';
+
+    setTimeout(function () {
+      window.location.href = '/#booking';
+    }, 700);
+  }
+
   function setError(message) {
     if (!message) {
       errorBox.textContent = '';
@@ -234,16 +294,23 @@
   async function loadSubmissions() {
     setError('');
 
+    var user = window.netlifyIdentity && window.netlifyIdentity.currentUser
+      ? window.netlifyIdentity.currentUser()
+      : null;
+
+    if (!user) {
+      setLoggedOutState('Log in to view booking submissions.');
+      return;
+    }
+
+    if (!isAdminUser(user)) {
+      setNonAdminState();
+      return;
+    }
+
     var token = await getJwt();
     if (!token) {
-      authStatus.textContent = 'Log in to view booking submissions.';
-      tableWrap.classList.add('hidden');
-      if (filtersWrap) filtersWrap.classList.add('hidden');
-      if (resultsMeta) resultsMeta.classList.add('hidden');
-      if (paginationWrap) paginationWrap.classList.add('hidden');
-      loginBtn.classList.remove('hidden');
-      logoutBtn.classList.add('hidden');
-      refreshBtn.classList.add('hidden');
+      setLoggedOutState('Log in to view booking submissions.');
       return;
     }
 
@@ -256,6 +323,10 @@
     });
 
     if (!response.ok) {
+      if (response.status === 403) {
+        setNonAdminState();
+        return;
+      }
       throw new Error('Could not load submissions. Check Netlify Identity and function environment variables.');
     }
 

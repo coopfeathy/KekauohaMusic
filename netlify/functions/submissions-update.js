@@ -16,6 +16,36 @@ function requireIdentity(context) {
   return user;
 }
 
+function normalizeRoles(rawRoles) {
+  if (!rawRoles) return [];
+  if (Array.isArray(rawRoles)) {
+    return rawRoles
+      .map(function (role) { return String(role || '').trim().toLowerCase(); })
+      .filter(Boolean);
+  }
+
+  return [String(rawRoles).trim().toLowerCase()].filter(Boolean);
+}
+
+function userHasAdminRole(user) {
+  if (!user) return false;
+  var appMetadata = user.app_metadata;
+
+  if (typeof appMetadata === 'string') {
+    try {
+      appMetadata = JSON.parse(appMetadata);
+    } catch (_error) {
+      appMetadata = null;
+    }
+  }
+
+  if (!appMetadata || typeof appMetadata !== 'object') {
+    return false;
+  }
+
+  return normalizeRoles(appMetadata.roles).includes('admin');
+}
+
 exports.handler = async function (event, context) {
   if (event.httpMethod !== 'POST') {
     return jsonResponse(405, { error: 'Method not allowed' });
@@ -24,6 +54,10 @@ exports.handler = async function (event, context) {
   var user = requireIdentity(context);
   if (!user) {
     return jsonResponse(401, { error: 'Authentication required' });
+  }
+
+  if (!userHasAdminRole(user)) {
+    return jsonResponse(403, { error: 'Admin role required' });
   }
 
   try {
