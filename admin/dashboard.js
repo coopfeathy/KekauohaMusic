@@ -7,6 +7,8 @@
   var tableWrap = document.getElementById('tableWrap');
   var authStatus = document.getElementById('authStatus');
   var errorBox = document.getElementById('errorBox');
+  var accessDenied = document.getElementById('accessDenied');
+  var logoutFromDenied = document.getElementById('logoutFromDenied');
   var submissionsBody = document.getElementById('submissionsBody');
   var filtersWrap = document.getElementById('filtersWrap');
   var searchInput = document.getElementById('searchInput');
@@ -79,13 +81,10 @@
     if (resultsMeta) resultsMeta.classList.add('hidden');
     if (paginationWrap) paginationWrap.classList.add('hidden');
     loginBtn.classList.add('hidden');
-    logoutBtn.classList.remove('hidden');
+    logoutBtn.classList.add('hidden');
     refreshBtn.classList.add('hidden');
-    authStatus.textContent = 'This dashboard is admin-only. Redirecting to the booking form…';
-
-    setTimeout(function () {
-      window.location.href = '/#booking';
-    }, 700);
+    authStatus.classList.add('hidden');
+    if (accessDenied) accessDenied.classList.remove('hidden');
   }
 
   function setError(message) {
@@ -335,6 +334,8 @@
     currentPage = 1;
     applyFilters();
 
+    if (accessDenied) accessDenied.classList.add('hidden');
+    authStatus.classList.remove('hidden');
     authStatus.textContent = 'Loaded ' + String(allSubmissions.length) + ' booking submissions.';
     tableWrap.classList.remove('hidden');
     if (filtersWrap) filtersWrap.classList.remove('hidden');
@@ -426,6 +427,15 @@
     user.logout();
   });
 
+  if (logoutFromDenied) {
+    logoutFromDenied.addEventListener('click', function () {
+      if (!window.netlifyIdentity) return;
+      var user = window.netlifyIdentity.currentUser();
+      if (!user) return;
+      user.logout();
+    });
+  }
+
   refreshBtn.addEventListener('click', function () {
     loadSubmissions().catch(function (error) {
       setError(error.message || 'Unable to refresh submissions.');
@@ -511,9 +521,11 @@
       if (filtersWrap) filtersWrap.classList.add('hidden');
       if (resultsMeta) resultsMeta.classList.add('hidden');
       if (paginationWrap) paginationWrap.classList.add('hidden');
+      if (accessDenied) accessDenied.classList.add('hidden');
       submissionsBody.innerHTML = '';
       allSubmissions = [];
       currentPage = 1;
+      authStatus.classList.remove('hidden');
       authStatus.textContent = 'Logged out.';
       loginBtn.classList.remove('hidden');
       logoutBtn.classList.add('hidden');

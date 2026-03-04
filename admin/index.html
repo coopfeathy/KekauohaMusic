@@ -47,6 +47,27 @@
     .pill-booked { background: #e7f8ee; color: #1e8449; }
     .pill-closed { background: #f3f4f6; color: #3f4657; }
     .hidden { display: none !important; }
+    .access-denied {
+      background: #fff8e4;
+      border: 2px solid #d4a017;
+      border-radius: var(--radius-md);
+      padding: var(--space-xl);
+      text-align: center;
+      margin: var(--space-xl) 0;
+    }
+    .access-denied h2 {
+      color: var(--color-primary);
+      margin-bottom: var(--space-md);
+      font-size: 1.4rem;
+    }
+    .access-denied p {
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-md);
+      line-height: 1.6;
+    }
+    .access-denied .btn {
+      margin-top: var(--space-md);
+    }
     @media (max-width: 900px) {
       .admin-top { align-items: flex-start; flex-direction: column; }
       .admin-filters { grid-template-columns: 1fr; }
@@ -72,6 +93,14 @@
 
         <div id="authStatus" class="admin-note" role="status" aria-live="polite">Checking login status…</div>
         <div id="errorBox" class="form-error-msg hidden" role="alert" aria-live="assertive"></div>
+
+        <div id="accessDenied" class="access-denied hidden" role="alert">
+          <h2>🔒 Admin Access Required</h2>
+          <p>This dashboard is reserved for studio administrators. If you need to book a lesson, please use the booking form on the main website.</p>
+          <p style="font-size: 0.9rem; color: var(--color-text-muted);">If you believe you should have admin access, please contact the site owner to have the <strong>admin</strong> role added to your account.</p>
+          <a href="/#booking" class="btn btn-primary">Go to Booking Form</a>
+          <button class="btn btn-outline" id="logoutFromDenied" type="button" style="margin-left: var(--space-sm);">Log Out</button>
+        </div>
 
         <div class="admin-filters hidden" id="filtersWrap">
           <input type="search" id="searchInput" placeholder="Search by name, email, phone, program, or message" aria-label="Search submissions" />
