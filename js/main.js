@@ -3,6 +3,17 @@
   'use strict';
 
   /* ================================================
+     Redirect Netlify Identity confirmation to admin
+     ================================================ */
+  if (window.location.hash && 
+      (window.location.hash.includes('confirmation_token') || 
+       window.location.hash.includes('recovery_token') ||
+       window.location.hash.includes('invite_token'))) {
+    window.location.href = '/admin/' + window.location.hash;
+    return;
+  }
+
+  /* ================================================
      Year in footer
      ================================================ */
   var yearEl = document.getElementById('year');

@@ -12,6 +12,13 @@
   to = "/.netlify/functions/submissions-update"
   status = 200
 
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+  force = false
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -19,4 +26,4 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' https://identity.netlify.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.netlify.com https://www.google-analytics.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://identity.netlify.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.netlify.com https://identity.netlify.com https://kekauoha-music.netlify.app https://www.google-analytics.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
