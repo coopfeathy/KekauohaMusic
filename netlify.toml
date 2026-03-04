@@ -12,13 +12,6 @@
   to = "/.netlify/functions/submissions-update"
   status = 200
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  conditions = {Role = ["admin"]}
-  force = false
-
 [[headers]]
   for = "/*"
   [headers.values]
