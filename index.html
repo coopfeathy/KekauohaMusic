@@ -565,6 +565,23 @@
     </div>
   </footer>
 
+  <script>
+    // Handle Netlify Identity confirmation tokens
+    if (window.location.hash && (window.location.hash.includes('confirmation_token') || 
+        window.location.hash.includes('recovery_token') || window.location.hash.includes('invite_token'))) {
+      var script = document.createElement('script');
+      script.src = 'https://identity.netlify.com/v1/netlify-identity-widget.js';
+      script.onload = function() {
+        netlifyIdentity.init({
+          APIUrl: 'https://kekauoha-music.netlify.app/.netlify/identity'
+        });
+        netlifyIdentity.on('login', function() {
+          window.location.href = '/admin/';
+        });
+      };
+      document.head.appendChild(script);
+    }
+  </script>
   <script src="js/main.js"></script>
 </body>
 </html>
