@@ -435,6 +435,9 @@
     var user = window.netlifyIdentity.currentUser();
     if (!user) return;
     user.logout();
+    setTimeout(function() {
+      window.location.reload();
+    }, 100);
   });
 
   if (logoutFromDenied) {
@@ -443,6 +446,9 @@
       var user = window.netlifyIdentity.currentUser();
       if (!user) return;
       user.logout();
+      setTimeout(function() {
+        window.location.reload();
+      }, 100);
     });
   }
 
@@ -813,12 +819,18 @@
   if (testimonialLogoutBtn) {
     testimonialLogoutBtn.addEventListener('click', function () {
       window.netlifyIdentity.logout();
+      setTimeout(function() {
+        window.location.reload();
+      }, 100);
     });
   }
 
   if (testimonialLogoutFromDenied) {
     testimonialLogoutFromDenied.addEventListener('click', function () {
       window.netlifyIdentity.logout();
+      setTimeout(function() {
+        window.location.reload();
+      }, 100);
     });
   }
 
